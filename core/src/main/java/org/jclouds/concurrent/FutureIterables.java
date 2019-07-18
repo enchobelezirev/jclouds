@@ -80,7 +80,9 @@ public class FutureIterables {
 
          for (F from : fromIterable) {
             ListenableFuture<? extends T> to = function.apply(from);
-            responses.put(from, to);
+            if (to != null) {
+                responses.put(from, to);
+            }
          }
          try {
             exceptions = awaitCompletion(responses, exec, maxTime, logger, logPrefix);

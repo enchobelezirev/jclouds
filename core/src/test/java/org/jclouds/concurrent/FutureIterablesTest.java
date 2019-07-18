@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.List;
 
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
@@ -37,6 +38,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.common.collect.Lists;
 
 /**
  * Tests behavior of FutureIterables
@@ -61,6 +63,16 @@ public class FutureIterablesTest {
 
    }
 
+   public void testWithNullResultsInList() {
+       List<String> result = Lists.newArrayList(transformParallel(ImmutableSet.of("hello", "goodbye"), new Function<String, ListenableFuture<? extends String>>() {
+           public ListenableFuture<String> apply(String input) {
+              return null;
+           }
+        }, newDirectExecutorService(), null, Logger.NULL, ""));
+       assertEquals(0, result.size());
+
+    }
+   
    public void testNormalExceptionPropagatesAsTransformParallelExceptionAndTries5XPerElement() {
       final AtomicInteger counter = new AtomicInteger();
 
